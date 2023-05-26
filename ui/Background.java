@@ -55,7 +55,6 @@ public class Background extends JPanel implements Runnable {
 
     public void refreshScrollBar() {
         this.setPreferredSize(new Dimension(900, MainFunction.y_person+165));
-        this.getMinimumSize(new Dimension(900, 500));
         revalidate();
     }
 
@@ -82,9 +81,7 @@ public class Background extends JPanel implements Runnable {
 
             appSNCF.getMainFunction().actualize();
             refreshScrollBar();
-            if(WIDTH<900){
-                this.setPreferredSize(new Dimension(900, 500));
-            }
+            appSNCF.setMinimumSize(new Dimension(920, 500));
 
             double timeTotal = System.nanoTime() - time1;
             repaint();

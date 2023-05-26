@@ -50,7 +50,7 @@ public class MainFunction {
         int i = 0;
         for(Person p : persons){
             i+=1;
-            //System.out.println(i + "   " + width_person);
+            p.setSize(width_person);
             p.setX(x_person); x_person+= width_person+15;
             p.setY(y_person);
             if(i!=0 && i%nbr==0){
