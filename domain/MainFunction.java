@@ -98,8 +98,9 @@ public class MainFunction {
         //persons.add(new Person(x_person, y_person, width_person, 150, "prénom", "nom", new Contract(1900, 1900, 11001, new Extension(false, 0, 0, false, [0])), false, Color.red));
         form = new Form(appSNCF);
     }
-    public void newPerson(String name, String firstName, long dateBegin, long dateEnd, boolean extend, int dateBeginExtend, int dateEndExtend, boolean reminder, int[] dateOfRemind){
+    public void newPerson(String name, String firstName, long dateBegin, long dateEnd, boolean extend, long dateBeginExtend, long dateEndExtend, boolean reminder, SortedMap<Integer, Boolean> dateOfRemind){
         persons.add(new Person(x_person, y_person, width_person, 150, name, firstName, new Contract(dateBegin, dateEnd, 100, new Extension(extend, dateBeginExtend, dateEndExtend, reminder, dateOfRemind)), false, Color.red));
+        System.out.println(dateOfRemind);
         form.dispose();
     }
     public Collection<Person> getPersons(){return persons;}

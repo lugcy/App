@@ -1,13 +1,15 @@
 package domain;
 
+import java.util.SortedMap;
+
 public class Extension {
     private boolean ext;
     private long dateBegin;
     private long dateEnd;
     private boolean remind;
-    private int[] reminder;
+    private SortedMap<Integer, Boolean> reminder;
 
-    public Extension(boolean ext, long dateBegin, long dateEnd, boolean remind, int[] reminder) {
+    public Extension(boolean ext, long dateBegin, long dateEnd, boolean remind, SortedMap<Integer, Boolean> reminder) {
         this.ext = ext;
         this.dateBegin = dateBegin;
         this.dateEnd = dateEnd;
@@ -23,6 +25,6 @@ public class Extension {
     public void setDateEnd(long dateEnd) {this.dateEnd = dateEnd;}
     public boolean isRemind() {return remind;}
     public void setRemind(boolean remind) {this.remind = remind;}
-    public int[] getReminder() {return reminder;}
-    public void setReminder(int[] reminder) {this.reminder = reminder;}
+    public SortedMap<Integer, Boolean> getReminder() {return reminder;}
+    public void setReminder(SortedMap<Integer, Boolean> reminder) {this.reminder = reminder;}
 }

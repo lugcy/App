@@ -7,6 +7,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,7 +44,8 @@ public class Form extends JFrame{
         JTextField TName = new JTextField();
         JTextField TLastName = new JTextField();
 
-        UtilDateModel modelB = new UtilDateModel();Properties propertiesB = new Properties(); UtilDateModel modelE = new UtilDateModel();Properties propertiesE = new Properties();
+        UtilDateModel modelB = new UtilDateModel();Properties propertiesB = new Properties();
+        UtilDateModel modelE = new UtilDateModel();Properties propertiesE = new Properties();
         modelB.setSelected(true); modelE.setSelected(true);
         JDatePanelImpl datePanelB = new JDatePanelImpl(modelB, propertiesB); JDatePanelImpl datePanelE = new JDatePanelImpl(modelE, propertiesE);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -73,16 +75,22 @@ public class Form extends JFrame{
         JLabel ExtJDateOfArrival = new JLabel(" Date of arrival :");
         JLabel ExtJDateOfDeparture = new JLabel(" Date of departure :");
 
-        JTextField TExtJDateOfArrival = new JTextField();
-        JTextField TExtJDateOfDeparture = new JTextField();
+        UtilDateModel modelBExt = new UtilDateModel();Properties propertiesBExt = new Properties();
+        UtilDateModel modelEExt = new UtilDateModel();Properties propertiesEExt = new Properties();
+        modelBExt.setSelected(true); modelEExt.setSelected(true);
+        JDatePanelImpl datePanelBExt = new JDatePanelImpl(modelBExt, propertiesBExt); JDatePanelImpl datePanelEExt = new JDatePanelImpl(modelEExt, propertiesEExt);
+        JDatePickerImpl datePickerBeginExt = new JDatePickerImpl(datePanelBExt, dateFormatter);
+        JDatePickerImpl datePickerEndExt = new JDatePickerImpl(datePanelEExt, dateFormatter);
+
         JToggleButton btnReminder = new JToggleButton("Reminder off");
 
         JPanel panel2bis = new JPanel();
         panel2bis.setLayout(new GridLayout(10, 1, 5, 5));
         String[] options = {"1 day before", "2 days before", "3 days before", "4 days before", "5 days before", "6 days before", "1 week before", "2 weeks before", "3 weeks before", "1 month before"};
-        Collection<JRadioButton> radioButtons = new ArrayList<>();
+        SortedMap<Integer, JRadioButton> radioButtons = new TreeMap<>();int i=0;
         for(String option : options){
-            radioButtons.add(new JRadioButton(option));
+            radioButtons.put(i, new JRadioButton(option));
+            i++;
         }
 
         JPanel panel3 = new JPanel();
@@ -94,14 +102,11 @@ public class Form extends JFrame{
         panel1.add(JDateOfDeparture, BorderLayout.CENTER);panel1.add(datePickerEnd, BorderLayout.CENTER);
         panel1.add(btnExt, BorderLayout.CENTER);
 
-        panel2one.add(ExtJDateOfArrival, BorderLayout.CENTER); panel2one.add(TExtJDateOfArrival, BorderLayout.CENTER);
-        panel2one.add(ExtJDateOfDeparture, BorderLayout.CENTER); panel2one.add(TExtJDateOfDeparture, BorderLayout.CENTER);
+        panel2one.add(ExtJDateOfArrival, BorderLayout.CENTER); panel2one.add(datePickerBeginExt, BorderLayout.CENTER);
+        panel2one.add(ExtJDateOfDeparture, BorderLayout.CENTER); panel2one.add(datePickerEndExt, BorderLayout.CENTER);
         panel2one.add(btnReminder);
         panel2one.setVisible(false); panel2.add(panel2one, BorderLayout.NORTH);
-
-        for(JRadioButton jrb : radioButtons){
-            panel2bis.add(jrb, BorderLayout.CENTER);
-        }
+        radioButtons.forEach((key, value) -> panel2bis.add(value, BorderLayout.CENTER));
         panel2bis.setVisible(false); panel2.add(panel2bis, BorderLayout.NORTH);
 
         panel3.add(save, BorderLayout.CENTER);
@@ -143,7 +148,8 @@ public class Form extends JFrame{
                 boolean validate = true;
                 Date dateBegin = (Date) datePickerBegin.getModel().getValue();
                 Date dateEnd = (Date) datePickerEnd.getModel().getValue();
-                System.out.println(dateBegin.getTime());
+                Date dateBeginExt = (Date) datePickerBeginExt.getModel().getValue();
+                Date dateEndExt = (Date) datePickerBeginExt.getModel().getValue();
 
                 if(TName.getText()==null){
                     validate=false;
@@ -165,33 +171,45 @@ public class Form extends JFrame{
                     validate=false;
                     JOptionPane.showMessageDialog(null, "La date de début est supérieur à la date de fin.");
                 }
+                if((long)dateEnd.getTime() <= (long)(new Date()).getTime()){
+                    validate=false;
+                    JOptionPane.showMessageDialog(null, "La date de fin de contrat est déjà passée.");
+                }
                 if(btnExt.isSelected()){
-                    if(TExtJDateOfArrival.getText()==null){
+                    if(dateBeginExt == null){
                         validate=false;
                         JOptionPane.showMessageDialog(null, "Veuillez indiquer une date de renouvellement de contrat.");
                     }
-                    if(TExtJDateOfDeparture.getText()==null){
+                    if(dateEndExt==null){
                         validate=false;
                         JOptionPane.showMessageDialog(null, "Veuillez indiquer une date de fin de renouvellement du contrat");
                     }
-                    if(Integer.parseInt(TExtJDateOfArrival.getText()) > Integer.parseInt(TExtJDateOfDeparture.getText())){
+                    if((long)dateBeginExt.getTime() > (long)dateEndExt.getTime()){
                         validate=false;
-                        JOptionPane.showMessageDialog(null, "La date de début est supérieur à la date de fin.");
+                        JOptionPane.showMessageDialog(null, "La date de début de renouvellement est supérieure à la date de fin de renouvellement.");
+                    }
+                    if((long)dateBeginExt.getTime() < (long)dateEnd.getTime()){
+                        validate=false;
+                        JOptionPane.showMessageDialog(null, "La date de début de renouvellement est inférieure à la date de fin du contrat.");
                     }
                 }
 
+                SortedMap<Integer, Boolean> opt = new TreeMap<>();
+                radioButtons.forEach((key, value) -> opt.put(key, value.isSelected()));
+
                 if(validate){
                     if(btnExt.isSelected()) {
-                        if(btnReminder.isSelected())
-                            appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), (long)dateBegin.getTime(), (long)dateEnd.getTime(), true,
-                                    Integer.parseInt(TExtJDateOfArrival.getText()), Integer.parseInt(TExtJDateOfDeparture.getText()), true, new int[]{10001, 1020324});
+                        if(btnReminder.isSelected()) {
+                            appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), (long) dateBegin.getTime(), (long) dateEnd.getTime(), true,
+                                    (long) dateBeginExt.getTime(), (long) dateEndExt.getTime(), true, opt);
+                        }
                         else
                             appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), (long)dateBegin.getTime(), (long)dateEnd.getTime(), true,
-                                    Integer.parseInt(TExtJDateOfArrival.getText()), Integer.parseInt(TExtJDateOfDeparture.getText()), false, new int[]{});
+                                    (long)dateBeginExt.getTime(), (long)dateEndExt.getTime(), false, opt);
                     }
                     else
                         appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), (long)dateBegin.getTime(), (long)dateEnd.getTime(), false,
-                                0, 0, false, new int[]{});
+                                0, 0, false, opt);
                 }
             }
         });
