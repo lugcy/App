@@ -1,11 +1,12 @@
 package domain;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Person {
+public class Person implements Serializable {
     private int x;
     private int y;
     private int size_x;

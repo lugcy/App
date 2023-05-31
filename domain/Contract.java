@@ -1,6 +1,8 @@
 package domain;
 
-public class Contract {
+import java.io.Serializable;
+
+public class Contract implements Serializable {
     private long dateBegin;
     private long dateEnd;
     private int id;

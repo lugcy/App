@@ -1,8 +1,9 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.SortedMap;
 
-public class Extension {
+public class Extension implements Serializable {
     private boolean ext;
     private long dateBegin;
     private long dateEnd;

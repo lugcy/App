@@ -7,6 +7,7 @@ import ui.Form;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.Collection;
@@ -37,6 +38,8 @@ public class MainFunction {
         y_person+=135+marge;
 
         elmts.add(btnAdd);elmts.add(line);elmts.add(btnDel);
+
+        loadFile();
     }
 
     public void mouseClick(int x, int y){
@@ -49,6 +52,7 @@ public class MainFunction {
         for(Person p : persons){
             if(e==KeyEvent.VK_DELETE && p.isMouseOn()){
                 persons.remove(p);
+                saveFile();
                 break;
             }
         }
@@ -100,8 +104,45 @@ public class MainFunction {
     }
     public void newPerson(String name, String firstName, long dateBegin, long dateEnd, boolean extend, long dateBeginExtend, long dateEndExtend, boolean reminder, SortedMap<Integer, Boolean> dateOfRemind){
         persons.add(new Person(x_person, y_person, width_person, 150, name, firstName, new Contract(dateBegin, dateEnd, 100, new Extension(extend, dateBeginExtend, dateEndExtend, reminder, dateOfRemind)), false, Color.red));
-        System.out.println(dateOfRemind);
+        saveFile();
         form.dispose();
+    }
+
+    public void loadFile(){
+        File file = new File("Ressources/file.obj");
+        if(file.length()!= 0){
+            try{
+                ObjectInputStream ois =new ObjectInputStream(new FileInputStream(file));
+                try{
+                    while(true)
+                        persons.add((Person)ois.readObject());
+                } catch (EOFException e){
+                    System.out.println("File already readed");
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                ois.close();
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    public void saveFile(){
+        try{
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("Ressources/file.obj"));
+            persons.forEach(p-> {
+                try {
+                    oos.writeObject(p);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            oos.close();
+        } catch(IOException e){
+            throw new RuntimeException();
+        }
     }
     public Collection<Person> getPersons(){return persons;}
     public List<Object> getElmts(){return elmts;}
