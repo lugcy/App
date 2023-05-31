@@ -12,6 +12,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -43,6 +44,12 @@ public class Background extends JPanel implements Runnable {
             public void componentResized(ComponentEvent e) {
                 WIDTH = getWidth();
                 int height = getHeight();
+            }
+        });
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                appSNCF.getMainFunction().isPressed(e.getKeyChar());
             }
         });
 

@@ -12,8 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 
 public class Form extends JFrame{
@@ -25,7 +25,7 @@ public class Form extends JFrame{
         init();
         this.appSNCF = appSNCF;
         this.pack();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         this.requestFocus();
         this.setVisible(true);
@@ -35,15 +35,33 @@ public class Form extends JFrame{
         JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayout(5, 1, 10, 10));
 
-        JLabel JName = new JLabel(" Name :");
+        JLabel JName = new JLabel(" First Name :");
         JLabel JLastName = new JLabel(" Last Name :");
         JLabel JDateOfArrival = new JLabel(" Date of arrival");
         JLabel JDateOfDeparture = new JLabel(" Date of departure");
 
         JTextField TName = new JTextField();
         JTextField TLastName = new JTextField();
-        JTextField TDateOfArrival = new JTextField();
-        JTextField TDateOfDeparture = new JTextField();
+
+        UtilDateModel modelB = new UtilDateModel();Properties propertiesB = new Properties(); UtilDateModel modelE = new UtilDateModel();Properties propertiesE = new Properties();
+        modelB.setSelected(true); modelE.setSelected(true);
+        JDatePanelImpl datePanelB = new JDatePanelImpl(modelB, propertiesB); JDatePanelImpl datePanelE = new JDatePanelImpl(modelE, propertiesE);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        JFormattedTextField.AbstractFormatter dateFormatter = new JFormattedTextField.AbstractFormatter() {
+            @Override
+            public Object stringToValue(String text) throws java.text.ParseException {
+                return dateFormat.parseObject(text);
+            }
+            @Override
+            public String valueToString(Object value) throws java.text.ParseException {
+                if (value instanceof java.util.Date) {
+                    return dateFormat.format((java.util.Date) value);
+                }
+                return "";
+            }
+        };
+        JDatePickerImpl datePickerBegin = new JDatePickerImpl(datePanelB, dateFormatter);
+        JDatePickerImpl datePickerEnd = new JDatePickerImpl(datePanelE, dateFormatter);
 
         JToggleButton btnExt = new JToggleButton("Extension off");
 
@@ -72,8 +90,8 @@ public class Form extends JFrame{
 
         panel1.add(JName, BorderLayout.CENTER); panel1.add(TName, BorderLayout.CENTER);
         panel1.add(JLastName, BorderLayout.CENTER);panel1.add(TLastName, BorderLayout.CENTER);
-        panel1.add(JDateOfArrival, BorderLayout.CENTER);panel1.add(TDateOfArrival, BorderLayout.CENTER);
-        panel1.add(JDateOfDeparture, BorderLayout.CENTER);panel1.add(TDateOfDeparture, BorderLayout.CENTER);
+        panel1.add(JDateOfArrival, BorderLayout.CENTER);panel1.add(datePickerBegin, BorderLayout.CENTER);
+        panel1.add(JDateOfDeparture, BorderLayout.CENTER);panel1.add(datePickerEnd, BorderLayout.CENTER);
         panel1.add(btnExt, BorderLayout.CENTER);
 
         panel2one.add(ExtJDateOfArrival, BorderLayout.CENTER); panel2one.add(TExtJDateOfArrival, BorderLayout.CENTER);
@@ -123,23 +141,27 @@ public class Form extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean validate = true;
+                Date dateBegin = (Date) datePickerBegin.getModel().getValue();
+                Date dateEnd = (Date) datePickerEnd.getModel().getValue();
+                System.out.println(dateBegin.getTime());
+
                 if(TName.getText()==null){
                     validate=false;
                     JOptionPane.showMessageDialog(null, "Veuillez rentrer un nom.");
                 }
-                else if(TLastName.getText()==null){
+                if(TLastName.getText()==null){
                     validate=false;
                     JOptionPane.showMessageDialog(null, "Veuillez rentrer un prénom.");
                 }
-                else if(TDateOfArrival.getText()==null){
+                if(dateBegin==null){
                     validate=false;
                     JOptionPane.showMessageDialog(null, "Veuillez indiquer une date de début.");
                 }
-                if(TDateOfDeparture.getText()==null){
+                if(dateEnd==null){
                     validate=false;
                     JOptionPane.showMessageDialog(null, "Veuillez indiquer une date de fin.");
                 }
-                if(Integer.parseInt(TDateOfArrival.getText()) > Integer.parseInt(TDateOfDeparture.getText())){
+                if((long)dateBegin.getTime() >= (long)dateEnd.getTime()){
                     validate=false;
                     JOptionPane.showMessageDialog(null, "La date de début est supérieur à la date de fin.");
                 }
@@ -161,14 +183,14 @@ public class Form extends JFrame{
                 if(validate){
                     if(btnExt.isSelected()) {
                         if(btnReminder.isSelected())
-                            appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), Integer.parseInt(TDateOfArrival.getText()), Integer.parseInt(TDateOfDeparture.getText()), true,
+                            appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), (long)dateBegin.getTime(), (long)dateEnd.getTime(), true,
                                     Integer.parseInt(TExtJDateOfArrival.getText()), Integer.parseInt(TExtJDateOfDeparture.getText()), true, new int[]{10001, 1020324});
                         else
-                            appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), Integer.parseInt(TDateOfArrival.getText()), Integer.parseInt(TDateOfDeparture.getText()), true,
+                            appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), (long)dateBegin.getTime(), (long)dateEnd.getTime(), true,
                                     Integer.parseInt(TExtJDateOfArrival.getText()), Integer.parseInt(TExtJDateOfDeparture.getText()), false, new int[]{});
                     }
                     else
-                        appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), Integer.parseInt(TDateOfArrival.getText()), Integer.parseInt(TDateOfDeparture.getText()), false,
+                        appSNCF.getMainFunction().newPerson(TName.getText(), TLastName.getText(), (long)dateBegin.getTime(), (long)dateEnd.getTime(), false,
                                 0, 0, false, new int[]{});
                 }
             }

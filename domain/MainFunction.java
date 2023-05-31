@@ -4,7 +4,9 @@ import ui.AppSNCF;
 import ui.Background;
 import ui.Form;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.List;
 import java.util.Collection;
@@ -40,6 +42,16 @@ public class MainFunction {
     public void mouseClick(int x, int y){
         if(btnAdd.getX() < x  && x < btnAdd.getX()+btnAdd.getWidth() && btnAdd.getY() < y  && y < btnAdd.getY()+btnAdd.getHeight())
             addPerson();
+        if(btnDel.getX() < x && x < btnDel.getX()+btnDel.getWidth() && btnDel.getY() < y && y < btnDel.getY()+btnAdd.getHeight())
+            JOptionPane.showMessageDialog(null, "Passez la souris sur un objet et appuyez sur 'Supr'");
+    }
+    public void isPressed(char e){
+        for(Person p : persons){
+            if(e==KeyEvent.VK_DELETE && p.isMouseOn()){
+                persons.remove(p);
+                break;
+            }
+        }
     }
     public void mouseMoved(int x, int y){
         for(Person p : persons) {
@@ -86,7 +98,7 @@ public class MainFunction {
         //persons.add(new Person(x_person, y_person, width_person, 150, "prénom", "nom", new Contract(1900, 1900, 11001, new Extension(false, 0, 0, false, [0])), false, Color.red));
         form = new Form(appSNCF);
     }
-    public void newPerson(String name, String firstName, long dateBegin, long dateEnd, boolean extend, long dateBeginExtend, long dateEndExtend, boolean reminder, int[] dateOfRemind){
+    public void newPerson(String name, String firstName, long dateBegin, long dateEnd, boolean extend, int dateBeginExtend, int dateEndExtend, boolean reminder, int[] dateOfRemind){
         persons.add(new Person(x_person, y_person, width_person, 150, name, firstName, new Contract(dateBegin, dateEnd, 100, new Extension(extend, dateBeginExtend, dateEndExtend, reminder, dateOfRemind)), false, Color.red));
         form.dispose();
     }

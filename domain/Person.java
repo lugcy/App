@@ -1,6 +1,9 @@
 package domain;
 
 import java.awt.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Person {
     private int x;
@@ -49,16 +52,21 @@ public class Person {
     public void pintar(Graphics g){
         g.setColor(color);
         g.drawRoundRect(x, y, size_x, size_y, arc, arc);
-        g.drawLine(x, y+30, x+size_x, y+30);
+        g.drawLine(x, (int) (y+0.2*size_y), x+size_x, (int) (y+0.2*size_y));
+        g.drawLine(x, (int) (y+0.55*size_y), x+size_x, (int) (y+0.55*size_y));
 
         g.setColor(Color.black);
         g.setFont(new Font("Times New Roman", Font.BOLD, 14));
         String str = firstName.toUpperCase().substring(0, 1) + firstName.toLowerCase().substring(1) + " " + lastName.toUpperCase();
         FontMetrics fm = g.getFontMetrics();
-        g.drawString(String.valueOf(str), x+(size_x-fm.stringWidth(str))/2, y+fm.getAscent()+7);
+        g.drawString(String.valueOf(str), x+(size_x-fm.stringWidth(str))/2, (int) (y+fm.getAscent()+0.05*size_y));
 
         g.setFont(new Font("Times New Roman", Font.BOLD, sizeTxt-4));
-        g.drawString(String.valueOf("- Arrivée:"), x+5, y+fm.getAscent()+35);
-        g.drawString(String.valueOf("- Départ:"), x+5, y+3*fm.getAscent()+35);
+        g.drawString(String.valueOf("- Arrivée:"), x+5, (int) (y+fm.getAscent()+0.24*size_y));
+        g.drawString(String.valueOf("- Départ:"), x+5, (int) (y+3*fm.getAscent()+0.24*size_y));
+
+        SimpleDateFormat dateB = new SimpleDateFormat("dd/MM/yyyy");
+        g.drawString(String.valueOf(dateB.format(contract.getDateBegin())), x+size_x-fm.stringWidth(String.valueOf(dateB.format(contract.getDateBegin())))-15, (int) (y+fm.getAscent()+0.24*size_y));
+        g.drawString(String.valueOf(dateB.format(contract.getDateEnd())), x+size_x-fm.stringWidth(String.valueOf(dateB.format(contract.getDateEnd())))-15, (int) (y+3*fm.getAscent()+0.24*size_y));
     }
 }
