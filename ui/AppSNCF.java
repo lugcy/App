@@ -12,7 +12,7 @@ public class AppSNCF extends JFrame {
 
     public AppSNCF(){
         super("AppSNCF");
-        this.mainFunction = new MainFunction();
+        this.mainFunction = new MainFunction(this);
         init();
         new Thread(bg).start();
     }

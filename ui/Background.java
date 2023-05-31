@@ -8,26 +8,24 @@ import domain.Line;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class Background extends JPanel implements Runnable {
     private AppSNCF appSNCF;
     private Image bg;
     private Image logo;
+    private int[] mouse = new int[]{0, 0};
     public static int WIDTH;
-
 
 
     public Background(AppSNCF appSNCF){
         try{
             bg = ImageIO.read(new File("Ressources/fond.png"));
-
             logo = ImageIO.read(new File("Ressources/logo.png"));
         }
         catch(IOException e){
@@ -40,12 +38,23 @@ public class Background extends JPanel implements Runnable {
             }
         });
 
-        addComponentListener(new ComponentAdapter() {
+        this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                // Récupération de la taille de la fenêtre en temps réel
                 WIDTH = getWidth();
                 int height = getHeight();
+            }
+        });
+
+        this.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                appSNCF.getMainFunction().mouseMoved(e.getX(), e.getY());
             }
         });
 
